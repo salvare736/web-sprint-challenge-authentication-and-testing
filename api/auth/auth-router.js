@@ -21,7 +21,7 @@ router.post('/register', async (req, res, next) => {
       res.status(201).json(newUser);
     }
   } catch (err) {
-    next(err);
+    next({ status: 401, message: 'username taken' });
   }
 });
 
@@ -43,7 +43,7 @@ router.post('/login', async (req, res, next) => {
       next({ status: 401, message: 'invalid credentials' });
     }
   } catch (err) {
-    next(err);
+    next({ status: 401, message: 'invalid credentials' });
   }
 });
 
