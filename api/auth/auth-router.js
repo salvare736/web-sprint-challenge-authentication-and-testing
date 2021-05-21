@@ -48,10 +48,10 @@ router.post('/login', async (req, res, next) => {
 });
 
 router.use((err, req, res, next) => { // eslint-disable-line
-  res.status(500).json({
-      note: 'An error occurred in the auth router!',
-      message: err.message,
-      stack: err.stack
+  res.status(err.status || 500).json({
+    message: err.message,
+    stack: err.stack,
+    customMessage: 'Something went wrong inside the auth router'
   });
 });
 

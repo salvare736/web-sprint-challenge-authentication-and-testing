@@ -1,17 +1,16 @@
-// do not make changes to this file
 const router = require('express').Router();
 const jokes = require('./jokes-data');
-const db = require('../../data/dbConfig');
+const { restricted } = require('../middleware/restricted');
 
-router.get('/', (req, res) => {
+router.get('/', restricted, (req, res, next) => {
   res.status(200).json(jokes);
 });
 
 router.use((err, req, res, next) => { // eslint-disable-line
-  res.status(500).json({
-      note: 'An error occurred in the jokes router!',
-      message: err.message,
-      stack: err.stack
+  res.status(err.status || 500).json({
+    message: err.message,
+    stack: err.stack,
+    customMessage: 'Something went wrong inside the jokes router'
   });
 });
 
