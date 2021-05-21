@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const db = require('../../data/dbConfig');
 
 router.post('/register', (req, res) => {
   res.end('implement register, please!');
@@ -54,6 +55,14 @@ router.post('/login', (req, res) => {
     4- On FAILED login due to `username` not existing in the db, or `password` being incorrect,
       the response body should include a string exactly as follows: "invalid credentials".
   */
+});
+
+router.use((err, req, res, next) => { // eslint-disable-line
+  res.status(500).json({
+      note: 'An error occurred in the auth router!',
+      message: err.message,
+      stack: err.stack
+  });
 });
 
 module.exports = router;
