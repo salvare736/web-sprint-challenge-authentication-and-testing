@@ -1,9 +1,21 @@
-// do not make changes to this file
 const router = require('express').Router();
 const jokes = require('./jokes-data');
+const { restricted } = require('../middleware/restricted');
 
-router.get('/', (req, res) => {
-  res.status(200).json(jokes);
+router.get('/', restricted, async (req, res, next) => {
+  try { 
+    res.status(200).json(jokes);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.use((err, req, res, next) => { // eslint-disable-line
+  res.status(err.status || 500).json({
+    message: err.message,
+    stack: err.stack,
+    customMessage: 'Something went wrong inside the jokes router'
+  });
 });
 
 module.exports = router;
