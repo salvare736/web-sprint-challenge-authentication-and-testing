@@ -20,10 +20,9 @@ test('sanity', () => {
 test('[POST] /api/auth/register - adds user into db', async () => {
   let users = await db('users');
   expect(users).toHaveLength(0);
-  await db('users').insert({ username: 'josie', password: "1234" });
+  const res = await request(server).post('/api/auth/register').send({ username: 'josie', password: "1234" });
   users = await db('users');
   expect(users).toHaveLength(1);
-  console.log(users[0]);
 });
 
 test('[POST] /api/auth/register - responds with newly added user', async () => {
@@ -35,3 +34,18 @@ test('[POST] /api/auth/register - responds with newly added user', async () => {
   expect(res.body.password).toBeDefined();
 });
 
+test('[POST] /api/auth/login - delivers welcome message upon login', async () => {
+  let users = await db('users');
+  expect(users).toHaveLength(0);
+  await request(server).post('/api/auth/register').send({ username: 'josie', password: "1234" });
+  const res = await request(server).post('/api/auth/login').send({ username: 'josie', password: "1234" });
+  expect(res.body.message).toEqual('welcome, josie');
+})
+
+test('[POST] /api/auth/login - delivers proper status code upon successful login', async () => {
+  let users = await db('users');
+  expect(users).toHaveLength(0);
+  await request(server).post('/api/auth/register').send({ username: 'josie', password: "1234" });
+  const res = await request(server).post('/api/auth/login').send({ username: 'josie', password: "1234" });
+  expect(res.status).toEqual(200);
+})
