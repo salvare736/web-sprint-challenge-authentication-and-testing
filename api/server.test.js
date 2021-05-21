@@ -20,7 +20,7 @@ test('sanity', () => {
 test('[POST] /api/auth/register - adds user into db', async () => {
   let users = await db('users');
   expect(users).toHaveLength(0);
-  const res = await request(server).post('/api/auth/register').send({ username: 'josie', password: "1234" });
+  await request(server).post('/api/auth/register').send({ username: 'josie', password: "1234" });
   users = await db('users');
   expect(users).toHaveLength(1);
 });
@@ -49,3 +49,13 @@ test('[POST] /api/auth/login - delivers proper status code upon successful login
   const res = await request(server).post('/api/auth/login').send({ username: 'josie', password: "1234" });
   expect(res.status).toEqual(200);
 })
+
+test('[GET] /api/jokes - hitting this endpoint without a token is unauthorized', async () => {
+  const res = await request(server).get('/api/jokes')
+  expect(res.unauthorized).toEqual(true);
+});
+
+test('[GET] /api/jokes - hitting this endpoint without a token returns the proper status code', async () => {
+  const res = await request(server).get('/api/jokes')
+  expect(res.status).toEqual(401);
+});

@@ -2,8 +2,12 @@ const router = require('express').Router();
 const jokes = require('./jokes-data');
 const { restricted } = require('../middleware/restricted');
 
-router.get('/', restricted, (req, res, next) => {
-  res.status(200).json(jokes);
+router.get('/', restricted, async (req, res, next) => {
+  try { 
+    res.status(200).json(jokes);
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.use((err, req, res, next) => { // eslint-disable-line
