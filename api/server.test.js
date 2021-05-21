@@ -17,17 +17,21 @@ test('sanity', () => {
   expect(true).toBe(true);
 });
 
-describe('Users', () => {
-  describe('[POST] /api/auth/register', () => {
-    it.todo('adds user into db');
-    it.todo('responds with newly added user');
-  });
-  describe('[POST] /api/auth/login', () => {
-    it.todo('logs in the user with token');
-    it.todo('responds with logged in user');
-  });
-  describe('[GET] /api/jokes', () => {
-    it.todo('returns list of jokes');
-    it.todo('fails to return list of jokes if not logged in');
-  });
+test('[POST] /api/auth/register - adds user into db', async () => {
+  let users = await db('users');
+  expect(users).toHaveLength(0);
+  await db('users').insert({ username: 'josie', password: "1234" });
+  users = await db('users');
+  expect(users).toHaveLength(1);
+  console.log(users[0]);
 });
+
+test('[POST] /api/auth/register - responds with newly added user', async () => {
+  let users = await db('users');
+  expect(users).toHaveLength(0);
+  const res = await request(server).post('/api/auth/register').send({ username: 'josie', password: "1234" });
+  expect(res.body.id).toEqual(1);
+  expect(res.body.username).toEqual('josie');
+  expect(res.body.password).toBeDefined();
+});
+
